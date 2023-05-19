@@ -2,7 +2,10 @@
 // JSX element with prop className="square"
 
 function Square({ value }) {
-  return <button className="square">{value}</button>;  // escape into js
+  function handleClick() {
+    console.log('Click!')
+  }
+  return <button className="square" onClick={handleClick}>{value}</button>;  // escape into js
 }
 
 export default function Board() {
