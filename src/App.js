@@ -12,14 +12,24 @@ function Square({value, onSquareClick}) {
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
+  const [xIsNext, setxIsNext] = useState(true);
 
   // In React, it’s conventional to use onSomething names for props which 
   // represent events and handleSomething for the function definitions which
   // handle those events.
   function handleClick(i) {
+    if (squares[i]) {
+      return;
+    }
     const nextSquares = squares.slice();
-    nextSquares[i] = "X";
+    if (xIsNext) {
+      nextSquares[i] = "X";
+    }
+    else {
+      nextSquares[i] = "O";
+    }
     setSquares(nextSquares);
+    setxIsNext(!xIsNext);
   }
 
   return (
