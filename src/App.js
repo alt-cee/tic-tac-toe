@@ -10,9 +10,9 @@ function Square({value, onSquareClick}) {
   );  // escape into js
 }
 
-function Board() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setxIsNext] = useState(true);
+function Board({ xIsNext, squares, onPlay }) {
+  //const [squares, setSquares] = useState(Array(9).fill(null));
+  //const [xIsNext, setxIsNext] = useState(true);
 
   // In React, it’s conventional to use onSomething names for props which 
   // represent events and handleSomething for the function definitions which
@@ -29,8 +29,9 @@ function Board() {
     else {
       nextSquares[i] = "O";
     }
-    setSquares(nextSquares);
-    setxIsNext(!xIsNext);
+    //setSquares(nextSquares);
+    //setxIsNext(!xIsNext);
+    onPlay(nextSquares);
   }
 
   const winner = calculateWinner(squares);
@@ -65,14 +66,51 @@ function Board() {
 }
 
 export default function Game() {
+  const [xIsNext, setxIsNext] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    //setHistory([...history, nextSquares]);
+    setxIsNext(!xIsNext);
+  }
+
+  function jumpTo(nextMove) {
+    // Render components based on state at a previous point in the game
+    setCurrentMove(nextMove);
+    setxIsNext(nextMove % 2 == 0); // x moves on 0, 2, 4, ...
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = 'Go to move #' + move;
+    }
+    else {
+      description = 'Go to start'
+    }
+    // Keys tell React about the identity of each component, which allows React 
+    // to maintain state between re-renders. If a component’s key changes, the 
+    // component will be destroyed and re-created with a new state.
+    // Keys do not need to be globally unique; they only need to be unique
+    // between components and their siblings.
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    )
+  })
 
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{/*TODO*/}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   )
