@@ -10,6 +10,7 @@ function Square({value, onSquareClick}) {
   );  // escape into js
 }
 
+// When do these arguments need to be escaped/not (?)
 function Board({ xIsNext, squares, onPlay }) {
   //const [squares, setSquares] = useState(Array(9).fill(null));
   //const [xIsNext, setxIsNext] = useState(true);
@@ -19,18 +20,20 @@ function Board({ xIsNext, squares, onPlay }) {
   // handle those events.
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) {
+      // Do nothing if square is already filled, or somebody wins.
       return;
     }
 
     const nextSquares = squares.slice();
+    // Make a copy of the squares and fill in the clicked square.
     if (xIsNext) {
       nextSquares[i] = "X";
     }
     else {
       nextSquares[i] = "O";
     }
-    //setSquares(nextSquares);
-    //setxIsNext(!xIsNext);
+
+    // Pass the square state up to handlePlay in Game (?)
     onPlay(nextSquares);
   }
 
@@ -74,6 +77,7 @@ export default function Game() {
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1)  // This was missing!
     //setHistory([...history, nextSquares]);
     setxIsNext(!xIsNext);
   }
